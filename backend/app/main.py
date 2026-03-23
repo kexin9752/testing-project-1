@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import engine, Base
-from app.routers import health, users, departments, auth, stats
+from app.routers import health, users, departments, auth, stats, transactions
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,6 +27,7 @@ app.include_router(users.router, prefix="/api/v1")
 app.include_router(departments.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(stats.router, prefix="/api/v1")
+app.include_router(transactions.router, prefix="/api/v1")
 
 
 @app.get("/")

@@ -80,3 +80,43 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         "role": user.role,
         "is_active": user.is_active
     }
+
+
+@router.post("/register")
+def register(
+    username: str,
+    email: str,
+    password: str,
+    full_name: str,
+    db: Session = Depends(get_db)
+):
+    existing_user = db.query(User).filter(User.username == username).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    existing_email = db.query(User).filter(User.email == email).first()
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already exists")
+
+    hashed_password = pwd_context.hash(password)
+    user = User(
+        username=username,
+        email=email,
+        hashed_password=hashed_password,
+        full_name=full_name
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    access_token = create_access_token(data={"sub": user.username, "user_id": user.id})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role
+        }
+    }

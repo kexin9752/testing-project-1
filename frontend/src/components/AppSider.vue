@@ -1,5 +1,5 @@
 <template>
-  <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible style="overflow: auto">
+  <a-layout-sider :collapsed="collapsed" :trigger="null" collapsible style="overflow: auto">
     <div v-if="!collapsed" style="height: 64px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: bold; border-bottom: 1px solid #ffffff20">
       FinanceTrade
     </div>

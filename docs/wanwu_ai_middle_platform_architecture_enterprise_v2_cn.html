@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI中台逻辑架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+    background: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+  }
+
+  .diagram {
+    width: 1400px;
+    background: #fff;
+    border: 2px solid #2c3e6b;
+    border-radius: 8px;
+    padding: 30px;
+    position: relative;
+  }
+
+  /* ===== Title ===== */
+  .title {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .title h1 {
+    font-size: 26px;
+    color: #1a2a4a;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+  .title p {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* ===== Layer label on the left ===== */
+  .layer {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .layer-label {
+    width: 56px;
+    min-height: 50px;
+    background: #2c3e6b;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 3px;
+    border-radius: 4px 0 0 4px;
+    flex-shrink: 0;
+    padding: 8px 0;
+  }
+  .layer-content {
+    flex: 1;
+    border: 2px solid #2c3e6b;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    padding: 14px;
+    background: #fafbfd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  /* ===== Generic boxes ===== */
+  .box {
+    background: #fff;
+    border: 1.5px solid #c0c8d8;
+    border-radius: 4px;
+    padding: 12px 14px;
+    text-align: center;
+    font-size: 13px;
+    color: #2c3e6b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    line-height: 1.5;
+  }
+  .box.dark {
+    background: #2c3e6b;
+    color: #fff;
+    border-color: #2c3e6b;
+    font-weight: bold;
+  }
+  .box.accent {
+    background: #e8edf5;
+    border-color: #8899bb;
+  }
+  .box.highlight-blue {
+    background: #3a7bd5;
+    color: #fff;
+    border-color: #3a7bd5;
+  }
+  .box.highlight-green {
+    background: #27ae60;
+    color: #fff;
+    border-color: #27ae60;
+  }
+  .box.highlight-orange {
+    background: #e67e22;
+    color: #fff;
+    border-color: #e67e22;
+  }
+  .box.highlight-red {
+    background: #e74c3c;
+    color: #fff;
+    border-color: #e74c3c;
+  }
+
+  .box small {
+    display: block;
+    font-size: 10px;
+    color: #888;
+    margin-top: 4px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .box.dark small {
+    color: #bbc;
+  }
+  .box.highlight-blue small,
+  .box.highlight-green small,
+  .box.highlight-orange small,
+  .box.highlight-red small {
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* ===== Application Layer ===== */
+  .app-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* ===== AI Middle Platform ===== */
+  .ai-platform {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .section {
+    border: 1.5px solid #8899bb;
+    border-radius: 6px;
+    padding: 10px;
+    background: #f5f7fb;
+  }
+  .section-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background: #2c3e6b;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+  }
+  .section-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .section-grid .box {
+    width: 100%;
+  }
+
+  /* Middle unified access section */
+  .unified-access {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .unified-access-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .go-cluster {
+    border: 2px dashed #3a7bd5;
+    border-radius: 6px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    position: relative;
+  }
+  .go-cluster::before {
+    content: "Go 微服务集群";
+    position: absolute;
+    top: -10px;
+    left: 14px;
+    background: #f5f7fb;
+    padding: 0 6px;
+    font-size: 11px;
+    color: #3a7bd5;
+    font-weight: bold;
+  }
+  .go-cluster .box {
+    font-size: 12px;
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+
+  /* ===== Execution service section ===== */
+  .exec-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .exec-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* ===== Tech foundation ===== */
+  .tech-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .tech-row:last-child {
+    margin-bottom: 0;
+  }
+  .tech-box {
+    background: #fff;
+    border: 1.5px solid #c0c8d8;
+    border-radius: 4px;
+    padding: 8px 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #2c3e6b;
+    line-height: 1.5;
+  }
+  .tech-box .label {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .tech-box .detail {
+    font-size: 10px;
+    color: #888;
+    line-height: 1.4;
+  }
+
+  /* ===== Runtime env ===== */
+  .runtime-content {
+    text-align: center;
+    font-size: 13px;
+    color: #2c3e6b;
+    width: 100%;
+    padding: 4px;
+  }
+
+  /* ===== Right side ecosystem ===== */
+  .main-body {
+    display: flex;
+    gap: 14px;
+  }
+  .main-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .ecosystem {
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .eco-title {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #2c3e6b;
+    padding: 8px;
+    background: #e8edf5;
+    border-radius: 4px;
+    border: 1.5px solid #8899bb;
+  }
+  .eco-box {
+    background: #fff;
+    border: 1.5px solid #c0c8d8;
+    border-radius: 4px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 12px;
+    color: #2c3e6b;
+    line-height: 1.5;
+  }
+
+  /* ===== Description note ===== */
+  .note-box {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 10px;
+    color: #999;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* ===== Footer ===== */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .footer-left {
+    font-size: 10px;
+    color: #aaa;
+  }
+  .footer-right {
+    display: flex;
+    gap: 8px;
+  }
+  .footer-badge {
+    font-size: 10px;
+    color: #666;
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 3px;
+  }
+
+  /* ===== Color legend ===== */
+  .legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #666;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="diagram">
+  <!-- Title -->
+  <div class="title">
+    <h1>AI 中台逻辑架构图</h1>
+    <p>支持智能体和AI多源生态，开放全链路与前端和后端灵活部署</p>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#2c3e6b"></div>核心平台模块</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3a7bd5"></div>接入与路由层</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>执行服务</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>知识与检索</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>可选扩展</div>
+  </div>
+
+  <div class="main-body">
+    <div class="main-left">
+
+      <!-- ===== Application Layer ===== -->
+      <div class="layer">
+        <div class="layer-label">应用层</div>
+        <div class="layer-content">
+          <div class="app-row">
+            <div class="box">统一门户与管理后台</div>
+            <div class="box">智能体场景</div>
+            <div class="box">工作流编排台</div>
+            <div class="box">知识库与问答平台</div>
+            <div class="box">开发接口层</div>
+            <div class="box">模型与训练平台</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AI Middle Platform ===== -->
+      <div class="layer">
+        <div class="layer-label">AI 中台</div>
+        <div class="layer-content">
+          <div class="ai-platform">
+
+            <!-- Left: Business Capability -->
+            <div class="section">
+              <div class="section-title">业务能力中台</div>
+              <div class="section-grid">
+                <div class="box dark">模型接入中心<small>多模型适配、负载均衡、Fallback</small></div>
+                <div class="box dark">MCP 服务中心<small>MCP 协议管理与服务注册</small></div>
+                <div class="box accent">联网检索能力<small>搜索引擎集成、实时数据获取</small></div>
+                <div class="box accent">智能体开发框架管理<small>Agent 构建与编排</small></div>
+                <div class="box accent">工作流编排引擎<small>可视化流程设计与执行</small></div>
+                <div class="box">开放接口与 BaaS<small>RESTful API / GraphQL</small></div>
+                <div class="box">账户与权限管理<small>RBAC / OAuth2.0 / SSO</small></div>
+              </div>
+            </div>
+
+            <!-- Middle: Unified Access -->
+            <div class="section">
+              <div class="section-title">统一接入</div>
+              <div class="unified-access">
+                <div class="box highlight-blue" style="min-height:50px;">统一接口入口<small>API Gateway / 统一鉴权</small></div>
+                <div class="box highlight-blue" style="min-height:50px;">BFF 聚合服务<small>前端适配与数据聚合</small></div>
+                <div class="box highlight-blue" style="min-height:50px;">统一路由与控制中枢<small>请求分发、流量控制、熔断降级</small></div>
+
+                <div class="go-cluster" style="margin-top: 8px;">
+                  <div class="box highlight-green">工作流引擎</div>
+                  <div class="box highlight-red">执行引擎（可选）</div>
+                  <div class="box highlight-green">文件回调服务</div>
+                  <div class="box highlight-orange">知识检索服务</div>
+                </div>
+
+                <div class="note-box">
+                  接入说明：所有请求经由统一接口入口鉴权后，通过路由中枢分发至对应的微服务集群处理
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Execution Service -->
+            <div class="section">
+              <div class="section-title">执行服务中台</div>
+              <div class="exec-grid">
+                <div class="exec-row">
+                  <div class="box highlight-green" style="min-height:56px;">工作流引擎<small>DAG 编排与调度</small></div>
+                  <div class="box highlight-red" style="min-height:56px;">执行引擎（可选）<small>Python / Node.js 运行时</small></div>
+                </div>
+                <div class="box highlight-green" style="width:100%;min-height:50px;">文件回调服务<small>异步文件处理与回调通知</small></div>
+                <div class="box highlight-orange" style="width:100%;min-height:50px;">知识检索服务<small>向量检索 / 全文检索 / 混合检索</small></div>
+                <div class="note-box">
+                  服务编排说明：执行服务采用微服务架构，支持独立扩缩容与灰度发布
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Technical Foundation ===== -->
+      <div class="layer">
+        <div class="layer-label">技术底座</div>
+        <div class="layer-content" style="flex-direction: column;">
+          <div class="tech-row">
+            <div class="tech-box">
+              <div class="label">前端技术栈</div>
+              <div class="detail">React / Vue3、TypeScript、Ant Design</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">Go 引擎层</div>
+              <div class="detail">Gin、gRPC、wire、zap、pprof</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">Python 能力层</div>
+              <div class="detail">FastAPI、LangChain、Celery</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">工作流插件全局</div>
+              <div class="detail">Temporal / Argo Workflows</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">编排与管理</div>
+              <div class="detail">Kubernetes、Helm、Terraform</div>
+            </div>
+          </div>
+          <div class="tech-row">
+            <div class="tech-box">
+              <div class="label">大模型智能层</div>
+              <div class="detail">OpenAI / Claude / 通义千问 / 文心一言</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">缓存</div>
+              <div class="detail">Redis / Memcached</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">对象存储</div>
+              <div class="detail">MinIO / S3 / OSS</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">消息队列</div>
+              <div class="detail">Kafka / RabbitMQ / NATS</div>
+            </div>
+            <div class="tech-box">
+              <div class="label">平台管理能力</div>
+              <div class="detail">监控告警、日志采集、链路追踪</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Runtime Environment ===== -->
+      <div class="layer">
+        <div class="layer-label">运行环境</div>
+        <div class="layer-content" style="justify-content: center;">
+          <div class="runtime-content">
+            Linux、Docker、x86_64 与 arm64、私有化部署、TiDB 与 OceanBase 适配
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Right: Ecosystem ===== -->
+    <div class="ecosystem">
+      <div class="eco-title">生态开放</div>
+      <div class="eco-box">开放模型厂商接入<small style="display:block;font-size:10px;color:#888;margin-top:3px;">OpenAI / Anthropic / 阿里 / 百度</small></div>
+      <div class="eco-box">MCP 服务生态<small style="display:block;font-size:10px;color:#888;margin-top:3px;">标准协议与工具市场</small></div>
+      <div class="eco-box">外部知识源接入<small style="display:block;font-size:10px;color:#888;margin-top:3px;">数据库 / 文档 / API</small></div>
+      <div class="eco-box">企业系统集成<small style="display:block;font-size:10px;color:#888;margin-top:3px;">ERP / CRM / OA / HR</small></div>
+      <div class="eco-box">技能与自动化工具<small style="display:block;font-size:10px;color:#888;margin-top:3px;">RPA / Webhook / 定时任务</small></div>
+      <div class="eco-box">多租户 / 权限隔离</div>
+      <div class="eco-box">信创适配 / 私有化部署</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">
+      AI中台逻辑架构图 &copy; 万物 AI 中台 &mdash; 企业版 v2
+    </div>
+    <div class="footer-right">
+      <span class="footer-badge">支持私有化部署</span>
+      <span class="footer-badge">多模型适配</span>
+      <span class="footer-badge">微服务架构</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

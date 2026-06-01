@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -23,10 +23,10 @@ class LoginRequest(BaseModel):
 
 
 class RegisterRequest(BaseModel):
-    username: str
-    email: str
-    password: str
-    full_name: str
+    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=128)
+    full_name: str = Field(..., min_length=1, max_length=100)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

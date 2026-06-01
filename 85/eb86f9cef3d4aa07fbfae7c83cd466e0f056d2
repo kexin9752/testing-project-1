@@ -1,0 +1,22 @@
+backend/app/routers/auth.py
+  s_a237907df4a930::t_4f8cad29f65bcb 5
+  s_a237907df4a930::t_ca90679b097957 26-29
+backend/tests/test_register_request.py
+  s_a237907df4a930::t_8f6e7f0020bb27 1-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "85eb86f9cef3d4aa07fbfae7c83cd466e0f056d2",
+  "prompts": {},
+  "sessions": {
+    "s_a237907df4a930": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2a168801-6126-4d07-a306-6582f4faf8da",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "OpenCode Dev <dev@opencode.server>"
+    }
+  }
+}

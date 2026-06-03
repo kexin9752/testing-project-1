@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>服务启动手册</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f9fbfd;
+      --text: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d9e1ec;
+      --primary: #2457a7;
+      --primary-dark: #1d3f7a;
+      --accent: #0f8a7b;
+      --warning: #b06b00;
+      --code-bg: #101828;
+      --code-text: #e6edf6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background: var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", Arial, sans-serif;
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+      max-width: 1280px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--surface);
+      box-shadow: 0 24px 80px rgba(31, 41, 55, 0.08);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 32px 24px;
+      overflow-y: auto;
+      color: #ffffff;
+      background: linear-gradient(180deg, var(--primary-dark), #16325e);
+    }
+
+    .brand {
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 14px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+      margin-top: 24px;
+    }
+
+    .nav a {
+      display: block;
+      padding: 8px 10px;
+      color: rgba(255, 255, 255, 0.86);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .nav a:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+    }
+
+    main {
+      padding: 42px min(6vw, 64px) 56px;
+    }
+
+    .hero {
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .hero h2 {
+      margin: 0;
+      color: #182230;
+      font-size: 36px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .hero .summary {
+      max-width: 760px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .quick-info {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .info-item {
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+    }
+
+    .info-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .info-value {
+      margin: 6px 0 0;
+      color: #182230;
+      font-size: 18px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:last-child {
+      border-bottom: none;
+    }
+
+    h3 {
+      margin: 0 0 14px;
+      color: #182230;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    h4 {
+      margin: 24px 0 10px;
+      color: #24344d;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .steps {
+      display: grid;
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .step {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+    }
+
+    .step h4 {
+      margin-top: 0;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: #113264;
+      background: #eaf1fb;
+      font-family: Consolas, "SFMono-Regular", "Liberation Mono", Menlo, monospace;
+      font-size: 0.95em;
+    }
+
+    pre {
+      margin: 12px 0 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      border-radius: 8px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      line-height: 1.55;
+    }
+
+    pre code {
+      padding: 0;
+      color: inherit;
+      background: transparent;
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      margin-top: 12px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+      background: #ffffff;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #24344d;
+      background: #eef4fb;
+      font-weight: 700;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .note {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      background: #eefaf7;
+      color: #23423e;
+    }
+
+    .warning {
+      border-left-color: var(--warning);
+      background: #fff8eb;
+      color: #563c12;
+    }
+
+    .footer {
+      padding-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        display: block;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        padding: 24px 20px;
+      }
+
+      .nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      main {
+        padding: 30px 20px 42px;
+      }
+
+      .hero h2 {
+        font-size: 30px;
+      }
+
+      .quick-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-info {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="sidebar" aria-label="文档导航">
+      <div class="brand">
+        <h1>服务启动手册</h1>
+        <p>适用于本项目的前后端本地启动与排查。</p>
+      </div>
+      <nav class="nav">
+        <a href="#overview">项目概览</a>
+        <a href="#requirements">环境要求</a>
+        <a href="#first-start">首次启动</a>
+        <a href="#daily-start">日常启动</a>
+        <a href="#addresses">访问地址</a>
+        <a href="#accounts">默认账号</a>
+        <a href="#troubleshooting">常见问题</a>
+        <a href="#checklist">启动检查清单</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero" id="overview">
+        <p class="eyebrow">Finance Trading System</p>
+        <h2>本地服务启动与验证指南</h2>
+        <p class="summary">
+          本手册说明如何在 Windows PowerShell 环境下启动后端 FastAPI 服务、前端 Vue 3 开发服务，并完成数据库初始化、接口访问和常见问题排查。
+        </p>
+        <div class="quick-info" aria-label="服务摘要">
+          <div class="info-item">
+            <p class="info-label">后端技术栈</p>
+            <p class="info-value">FastAPI</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">前端技术栈</p>
+            <p class="info-value">Vue 3 + Vite</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">数据库</p>
+            <p class="info-value">SQLite</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">推荐终端</p>
+            <p class="info-value">PowerShell</p>
+          </div>
+        </div>
+      </header>
+
+      <section id="requirements">
+        <h3>环境要求</h3>
+        <p>启动前请确认本机已安装以下运行环境，并能在终端中直接执行对应命令。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>环境</th>
+                <th>建议版本</th>
+                <th>检查命令</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Python</td>
+                <td>3.10 及以上</td>
+                <td><code>python --version</code></td>
+              </tr>
+              <tr>
+                <td>Node.js</td>
+                <td>18 及以上</td>
+                <td><code>node --version</code></td>
+              </tr>
+              <tr>
+                <td>npm</td>
+                <td>9 及以上</td>
+                <td><code>npm --version</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          若 Python 或 Node.js 版本过低，建议先升级环境后再安装依赖，避免依赖包安装失败或开发服务启动异常。
+        </div>
+      </section>
+
+      <section id="first-start">
+        <h3>首次启动</h3>
+        <p>首次启动需要分别安装后端依赖、初始化数据库、安装前端依赖。建议打开两个 PowerShell 终端，一个运行后端，一个运行前端。</p>
+
+        <div class="steps">
+          <article class="step">
+            <h4>1. 启动后端服务</h4>
+            <p>进入后端目录，创建虚拟环境并安装 Python 依赖。</p>
+            <pre><code>cd backend
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt</code></pre>
+
+            <p>初始化 SQLite 数据库和演示数据。</p>
+            <pre><code>python scripts/init_db.py</code></pre>
+
+            <p>启动 FastAPI 开发服务。</p>
+            <pre><code>uvicorn app.main:app --reload --host 0.0.0.0 --port 8000</code></pre>
+
+            <div class="note">
+              数据库文件通常会生成在 <code>backend/user_management.db</code>。如果重复执行初始化脚本，演示数据会按脚本逻辑重新写入或更新。
+            </div>
+          </article>
+
+          <article class="step">
+            <h4>2. 启动前端服务</h4>
+            <p>新开一个 PowerShell 终端，进入前端目录并安装依赖。</p>
+            <pre><code>cd frontend
+npm install</code></pre>
+
+            <p>启动 Vite 开发服务。</p>
+            <pre><code>npm run dev</code></pre>
+
+            <div class="note">
+              前端已配置 <code>/api</code> 代理到 <code>http://localhost:8000</code>，因此请先确保后端服务正在运行。
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="daily-start">
+        <h3>日常启动</h3>
+        <p>依赖安装完成后，后续开发只需要分别启动后端和前端。</p>
+
+        <h4>后端终端</h4>
+        <pre><code>cd backend
+.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000</code></pre>
+
+        <h4>前端终端</h4>
+        <pre><code>cd frontend
+npm run dev</code></pre>
+
+        <div class="warning note">
+          如果 <code>8000</code> 或 <code>3000</code> 端口已被占用，需要先关闭占用端口的进程，或临时调整启动端口并同步检查前端代理配置。
+        </div>
+      </section>
+
+      <section id="addresses">
+        <h3>访问地址</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>用途</th>
+                <th>地址</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>前端页面</td>
+                <td><a href="http://localhost:3000">http://localhost:3000</a></td>
+                <td>用户登录、仪表盘、用户、部门、交易和报表页面。</td>
+              </tr>
+              <tr>
+                <td>后端接口</td>
+                <td><a href="http://localhost:8000">http://localhost:8000</a></td>
+                <td>FastAPI 服务根地址。</td>
+              </tr>
+              <tr>
+                <td>Swagger 文档</td>
+                <td><a href="http://localhost:8000/docs">http://localhost:8000/docs</a></td>
+                <td>后端接口调试与参数查看。</td>
+              </tr>
+              <tr>
+                <td>健康检查</td>
+                <td><a href="http://localhost:8000/api/v1/health">http://localhost:8000/api/v1/health</a></td>
+                <td>用于确认后端服务是否正常响应。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="accounts">
+        <h3>默认账号</h3>
+        <p>执行 <code>python scripts/init_db.py</code> 后，可使用以下演示账号登录系统。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>角色</th>
+                <th>用户名</th>
+                <th>密码</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>管理员</td>
+                <td><code>admin</code></td>
+                <td><code>admin123</code></td>
+              </tr>
+              <tr>
+                <td>普通用户</td>
+                <td><code>john.doe</code></td>
+                <td><code>password123</code></td>
+              </tr>
+              <tr>
+                <td>普通用户</td>
+                <td><code>jane.smith</code></td>
+                <td><code>password123</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="troubleshooting">
+        <h3>常见问题</h3>
+
+        <h4>前端页面能打开，但接口请求失败</h4>
+        <ul>
+          <li>确认后端终端仍在运行，没有启动报错。</li>
+          <li>打开 <a href="http://localhost:8000/api/v1/health">http://localhost:8000/api/v1/health</a> 检查健康接口。</li>
+          <li>确认后端端口为 <code>8000</code>，前端代理默认转发到该端口。</li>
+        </ul>
+
+        <h4>登录失败或没有演示数据</h4>
+        <ul>
+          <li>确认已在 <code>backend</code> 目录下执行 <code>python scripts/init_db.py</code>。</li>
+          <li>确认当前后端运行目录下存在 <code>user_management.db</code>。</li>
+          <li>如需重置数据，可停止服务后删除数据库文件，再重新执行初始化脚本。</li>
+        </ul>
+
+        <h4>依赖安装失败</h4>
+        <ul>
+          <li>先检查 Python、Node.js、npm 版本是否满足要求。</li>
+          <li>Python 依赖安装失败时，可先执行 <code>python -m pip install --upgrade pip</code>。</li>
+          <li>前端依赖安装异常时，可删除 <code>frontend/node_modules</code> 后重新执行 <code>npm install</code>。</li>
+        </ul>
+      </section>
+
+      <section id="checklist">
+        <h3>启动检查清单</h3>
+        <ol>
+          <li>后端虚拟环境已激活，依赖已安装。</li>
+          <li>已执行 <code>python scripts/init_db.py</code> 初始化数据库。</li>
+          <li>后端服务运行在 <code>http://localhost:8000</code>。</li>
+          <li>前端依赖已安装，开发服务运行在 <code>http://localhost:3000</code>。</li>
+          <li>健康检查接口可正常访问。</li>
+          <li>使用默认账号可完成登录。</li>
+        </ol>
+        <p class="footer">文档位置：<code>docs/service-start.html</code></p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

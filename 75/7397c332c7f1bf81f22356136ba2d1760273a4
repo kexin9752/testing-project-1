@@ -1,0 +1,19 @@
+docs/service-start.html
+  s_025ee63dc2f9d4::t_07b1dedc08959d 1-593
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "757397c332c7f1bf81f22356136ba2d1760273a4",
+  "prompts": {},
+  "sessions": {
+    "s_025ee63dc2f9d4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8b4c-dc2a-7732-a693-68c27bdd3c9a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "OpenCode Dev <dev@opencode.server>"
+    }
+  }
+}
